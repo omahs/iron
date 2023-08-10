@@ -8,13 +8,12 @@ import { useInvoke, useKeyPress } from "./../../hooks";
 import { OnboardingCarousel } from "./Carousel";
 import { steps } from "./Steps";
 
-interface Props {
-  closeOnboarding: () => void;
-}
-
 export type WizardFormData = { alchemyApiKey?: string | null };
 
-export function OnboardingWizard({ closeOnboarding }: Props) {
+export function Onboarding() {
+  const finish = () => {
+    invoke("settings_finish_onboarding");
+  };
   const { data: settings } = useInvoke<GeneralSettings>("settings_get");
 
   const [activeStep, setActiveStep] = useState(0);
@@ -42,7 +41,7 @@ export function OnboardingWizard({ closeOnboarding }: Props) {
       });
     }
 
-    closeOnboarding();
+    finish();
   };
 
   useKeyPress(["ArrowRight"], { meta: true }, handleNext);

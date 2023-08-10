@@ -11,7 +11,7 @@ async fn main() -> AppResult<()> {
     iron_tracing::init()?;
     fix_path_env::fix()?;
 
-    app::IronApp::build().await?.run();
+    app::IronApp::build().await?.run().await;
 
     Ok(())
 }

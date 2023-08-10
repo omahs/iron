@@ -1,1 +1,1 @@
-export { OnboardingWrapper } from "./Wrapper";
+export { Onboarding } from "./Onboarding";

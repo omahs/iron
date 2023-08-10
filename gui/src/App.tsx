@@ -11,7 +11,7 @@ import {
   WagmiWrapper,
   WalletUnlockDialog,
 } from "./components";
-import { OnboardingWrapper } from "./components/Onboarding";
+import { Onboarding } from "./components/Onboarding";
 import { useTheme } from "./store/theme";
 
 const queryClient = new QueryClient({
@@ -25,11 +25,9 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline>
         <QueryClientProvider client={queryClient}>
-          <OnboardingWrapper>
-            <WagmiWrapper>
-              <Routes />
-            </WagmiWrapper>
-          </OnboardingWrapper>
+          <WagmiWrapper>
+            <Routes />
+          </WagmiWrapper>
         </QueryClientProvider>
       </CssBaseline>
     </ThemeProvider>
@@ -40,6 +38,10 @@ function Routes() {
   return (
     <Router>
       <Switch>
+        <Route path="/onboarding">
+          <Onboarding />
+        </Route>
+
         <Route path="/dialog/tx-review/:id">
           {({ id }: { id: string }) => <TxReviewDialog id={parseInt(id)} />}
         </Route>

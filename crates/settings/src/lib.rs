@@ -56,6 +56,10 @@ impl Settings {
         Ok(())
     }
 
+    pub fn is_onboarded(&self) -> bool {
+        self.inner.onboarded
+    }
+
     pub fn get(&self) -> &SerializedSettings {
         &self.inner
     }

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use iron_broadcast::UIMsg;
 use iron_db::DB;
-use iron_types::ui_events;
+use iron_types::{ui_events, GlobalState};
 use tauri::{
     AppHandle, Builder, CustomMenuItem, GlobalWindowEvent, Manager, SystemTray, SystemTrayEvent,
     SystemTrayMenu, SystemTrayMenuItem, WindowBuilder, WindowEvent, WindowUrl,
@@ -58,10 +58,7 @@ impl IronApp {
             ])
             .setup(|app| {
                 let handle = app.handle();
-
-                tauri::async_runtime::spawn(async move {
-                    event_listener(handle).await;
-                });
+                tauri::async_runtime::spawn(async move { event_listener(handle).await });
 
                 #[cfg(feature = "debug")]
                 if std::env::var("IRON_OPEN_DEVTOOLS").is_ok() {
@@ -94,17 +91,39 @@ impl IronApp {
         init(&app, &db).await?;
 
         app.manage(db);
-        let res = Self { app };
 
-        Ok(res)
+        Ok(Self { app })
     }
 
-    pub fn run(self) {
+    pub async fn run(self) {
+        self.initial_window().await;
+
         self.app.run(|_, event| {
             if let tauri::RunEvent::ExitRequested { api, .. } = event {
                 api.prevent_exit();
             }
         });
+    }
+
+    async fn initial_window(&self) {
+        dbg!("here");
+        // TODO this breaks support tauri-plugin-window-state. we need to replace that with
+        // settings
+        if iron_settings::Settings::read().await.is_onboarded() {
+            WindowBuilder::new(&self.app.handle(), "main", WindowUrl::App("/".into()))
+                .inner_size(600.0, 700.0)
+                .build()
+                .unwrap();
+        } else {
+            WindowBuilder::new(
+                &self.app.handle(),
+                "onboarding",
+                WindowUrl::App("/onboarding".into()),
+            )
+            .inner_size(500.0, 500.0)
+            .build()
+            .unwrap();
+        }
     }
 
     #[cfg(not(target_os = "linux"))]
@@ -155,6 +174,7 @@ fn on_menu_event(event: WindowMenuEvent) {
 }
 
 async fn init(app: &tauri::App, db: &DB) -> AppResult<()> {
+    dbg!("init");
     // anvil needs to be started before networks, otherwise the initial tracker won't be ready to
     // spawn
     iron_sync::init(db.clone()).await;
