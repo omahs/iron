@@ -75,7 +75,13 @@ export function SettingsGeneral() {
             )}
           />
         </FormControl>
-        <FormControl error={!!errors.abiWatch}>
+
+        <Controller
+          name="abiWatch"
+          control={control}
+          render={({ field }) => <Checkbox {...field} checked={field.value} />}
+        />
+        {/*<FormControl error={!!errors.abiWatch}>
           <FormGroup>
             <FormControlLabel
               label="ABI Watcher"
@@ -95,7 +101,7 @@ export function SettingsGeneral() {
               {errors.abiWatch.message?.toString()}
             </FormHelperText>
           )}
-        </FormControl>
+        </FormControl>*/}
         <TextField
           label="ABI Watch path"
           defaultValue={general.abiWatchPath}
@@ -118,7 +124,7 @@ export function SettingsGeneral() {
           error={!!errors.etherscanApiKey}
           helperText={errors.etherscanApiKey?.message?.toString()}
         />
-        <FormControl error={!!errors.hideEmptyTokens}>
+        {/*<FormControl error={!!errors.hideEmptyTokens}>
           <FormGroup>
             <FormControlLabel
               label="Hide Tokens Without Balance"
@@ -137,7 +143,7 @@ export function SettingsGeneral() {
               }
             />
           </FormGroup>
-        </FormControl>
+        </FormControl>*/}
         <Button
           variant="contained"
           type="submit"
